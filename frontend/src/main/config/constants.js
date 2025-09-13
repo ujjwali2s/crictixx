@@ -5,10 +5,10 @@ export const API_ENDPOINTS = {
 };
 
 export const TELEGRAM_CHANNEL = {
-  URL: 'https://t.me/cricktixx',
+  URL: 'https://t.me/IndianCricketTeam018',
   SUPPORT_URL: 'https://web.telegram.org/a/#5175276516'
 };
 
 export const EXTERNAL_LINKS = {
-  ID_PROVIDER: 'https://thala7.in/'
+  ID_PROVIDER: ''
 };

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { CricketBall, Target, Timer } from 'lucide-react';
+import {  Target, Timer } from 'lucide-react';
 import { BattingCard } from './BattingCard';
 import { BowlingCard } from './BowlingCard';
 import { MatchHeader } from './MatchHeader';
@@ -11,7 +11,7 @@ import FallOfWickets from './FallOfWickets'; // Import the FallOfWickets compone
 import ExtrasSummary from './extraSummry'; // Import the ExtrasSummary component
 
 export function ScoreCard() {
-  const Baseurl ="http://localhost:5000"
+  const Baseurl ="https://3.110.27.69/api"
   const { matchId } = useParams();
   const [score, setScore] = useState(null);
   const [odds, setOdds] = useState(null);
@@ -27,7 +27,7 @@ export function ScoreCard() {
         "Accept-Language": "en-US,en;q=0.5",
       };
 
-      const response = await axios.get(`${Baseurl}/get_scorecard/${matchId}`, { headers });
+      const response = await axios.get(`${Baseurl}/api/get_scorecard/${matchId}`, { headers });
       setScore(response.data.doc[0].data.score);
       setLoading(false);
     } catch (err) {
@@ -44,7 +44,7 @@ export function ScoreCard() {
         "Accept-Language": "en-US,en;q=0.5",
       };
 
-      const response = await axios.get(`http://15.207.14.177:5000/api/get_odds/${matchId}`, { headers });
+      const response = await axios.get(`http://3.110.27.69/api/api/get_odds/${matchId}`, { headers });
       setOdds(response.data);
       setOddsLoading(false);
     } catch (err) {

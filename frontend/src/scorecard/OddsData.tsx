@@ -5,7 +5,7 @@ export function OddsSection({ matchId }) {
   const [oddsData, setOddsData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const Baseurl ="http://localhost:5000"
+  const Baseurl ="http://3.110.27.69/api"
 
   // Function to fetch odds data from the API
   const fetchOdds = async () => {

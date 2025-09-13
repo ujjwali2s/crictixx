@@ -1,0 +1,27 @@
+[
+    {
+      "id": 1,
+      "name": "Astro Cricket",
+      "img":"https://iptv-pro.github.io/logo/Astro%20Cricket.png",
+      "url": "/channel/astro"
+    },
+    {
+      "id": 2,
+      "name": "Fox Cricket",
+      "img":"https://iptv-pro.github.io/logo/FoxSports.png",
+      "url": "/channel/fox"
+    },
+    {
+      "id": 3,
+      "name": "Sky Sports",
+      "img":"https://iptv-pro.github.io/logo/skysport.png",
+      "url": "/channel/sky"
+    },
+    {
+      "id": 4,
+      "name": "SSports",
+      "img":"https://iptv-pro.github.io/logo/STAR%20Cricket.png",
+      "url": "/channel/scricket"
+    }
+  ]
+  

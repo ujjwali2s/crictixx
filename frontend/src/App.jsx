@@ -6,6 +6,10 @@ import JoinTelegramModal from './main/video/JoinTelegramModal';
 import Navbar from './main/video/Navbar';
 import Test from './main/video/Test';
 import Scorecard from './scorecard/ScoreCard';
+import Astro from './chennls/Astro';
+import FoxCricket from './chennls/FoxCricket';
+import SCricket from './chennls/Scricket';
+import SkySports from './chennls/SkySport';
 import { detectDevTools, preventDevTools } from './main/utils/devTools';
 import { TELEGRAM_CHANNEL } from './main/config/constants.js';
 
@@ -23,7 +27,7 @@ const App = () => {
     });
     
     if (!hasSeenModal) {
-      setIsModalOpen(true); // Show modal if not seen
+      setIsModalOpen(true); 
     }
 
     preventDevTools();
@@ -70,10 +74,13 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LiveMatches />} />
           <Route path="/video" element={<VideoPlayer />} />
-          <Route path="/get_scorecard/:matchId" element={<Scorecard />} />
-          <Route path="/test" element={<Test />} />
+          <Route path="/" element={<Test />} />
+          <Route path="/channel/astro" element={<Astro />} />
+          <Route path="/channel/fox" element={<FoxCricket />} />
+          <Route path="/channel/scricket" element={<SCricket />} />
+          <Route path="/channel/sky" element={<SkySports />} />
         </Routes>
-        {/* Only show the modal if isModalOpen is true */}
+       
         <JoinTelegramModal isOpen={isModalOpen} onClose={handleModalClose} />
       </div>
     </BrowserRouter>

@@ -1,0 +1,11 @@
+- [x] Update imports in SonyLivMatches.jsx: add Hls from 'hls.js', useRef, remove fetchMatches
+- [x] Remove state variables: matches, loading, error
+- [x] Remove useEffect for fetching matches
+- [x] Add videoRef and hlsRef using useRef
+- [x] Add useEffect to set up HLS playback with the provided URL
+- [x] Update return statement to render video element with controls
+- [x] Add poster image at the bottom like in VideoPlayer
+- [x] Add array of streams with names and URLs
+- [x] Add state for selected stream
+- [x] Add navigation header with buttons to switch streams
+- [x] Update useEffect to depend on selected URL
