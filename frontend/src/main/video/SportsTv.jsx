@@ -31,7 +31,6 @@ const ChannelList = () => {
         setLoading(false);
       }
     };
-
     fetchChannels();
   }, []);
 
