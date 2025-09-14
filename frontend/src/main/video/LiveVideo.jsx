@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 import poster from "../6226751042536718146.jpg"
-import liveData from './live.json';
 
 const LiveVideo = () => {
   const [streams, setStreams] = useState([]);
@@ -10,10 +9,15 @@ const LiveVideo = () => {
   const hlsRef = useRef(null);
 
   useEffect(() => {
-    setStreams(liveData);
-    if (liveData.length > 0) {
-      setSelectedStream(liveData[0]);
-    }
+    fetch('https://raw.githubusercontent.com/ujjwali2s/crictixx/refs/heads/main/frontend/src/main/video/live.json')
+      .then(response => response.json())
+      .then(data => {
+        setStreams(data);
+        if (data.length > 0) {
+          setSelectedStream(data[0]);
+        }
+      })
+      .catch(error => console.error('Error fetching live.json:', error));
   }, []);
 
   useEffect(() => {
