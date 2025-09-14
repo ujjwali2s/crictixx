@@ -5,7 +5,7 @@ import poster from "../6226751042536718146.jpg"
 const SonyLivMatches = () => {
   const streams = [
     { name: "Sony Liv Live Match", url: "https://edge3-moblive.yuppcdn.net/drm/smil:tencricketdrm.smil/chunklist_b996000.m3u8" },
-    { name: "Sony Sports 1", url: "https://live20.bozztv.com/akamaissh101/ssh101/starsports/chunks.m3u8" },
+    { name: "willow H", url: "http://xxip9.top:8080/live/7656691303/chrisbolden765%40icloud.com/58847.m3u8" },
     { name: "Sony 3 Asia Cup", url: "https://tiger-hub.vercel.app/Star_Sports-1/tracks-v1a1/mono.m3u8" }
   ];
 
@@ -73,6 +73,19 @@ const SonyLivMatches = () => {
           <img src={poster} alt="img" className='w-full h-full mt-4' />
         </a>
       </div>
+
+      {/* Footer */}
+      <footer className="mt-8 text-center">
+        <p className="text-gray-600 mb-2">Contact Developer</p>
+        <a
+          href="https://t.me/webdevloper_7"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Telegram
+        </a>
+      </footer>
     </div>
   );
 };
