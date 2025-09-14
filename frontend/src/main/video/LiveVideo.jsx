@@ -1,24 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 import poster from "../6226751042536718146.jpg"
+import liveData from './live.json';
 
 const LiveVideo = () => {
   const [streams, setStreams] = useState([]);
   const [selectedStream, setSelectedStream] = useState(null);
+  const [error, setError] = useState(null);
   const videoRef = useRef(null);
   const hlsRef = useRef(null);
 
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/ujjwali2s/crictixx/refs/heads/main/frontend/src/main/video/live.json')
-      .then(response => response.json())
-      .then(data => {
-        setStreams(data);
-        if (data.length > 0) {
-          setSelectedStream(data[0]);
-        }
-      })
-      .catch(error => console.error('Error fetching live.json:', error));
+    setStreams(liveData);
+    if (liveData.length > 0) {
+      setSelectedStream(liveData[0]);
+    }
   }, []);
+
+  useEffect(() => {
+    setError(null); // Clear error when stream changes
+  }, [selectedStream]);
 
   useEffect(() => {
     if (!selectedStream) {
@@ -40,6 +41,7 @@ const LiveVideo = () => {
         hlsRef.current.on(Hls.Events.ERROR, (_, data) => {
           if (data.fatal) {
             console.error('HLS.js error:', data);
+            setError('Video cannot be played. Error: ' + data.details);
           }
         });
       } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
@@ -85,13 +87,19 @@ const LiveVideo = () => {
 
         {/* Video Player or iframe */}
         <div className="relative bg-black rounded-lg overflow-hidden">
-          {selectedStream && selectedStream.type === 'm3u' ? (
+          {error ? (
+            <div className="w-full aspect-video flex items-center justify-center text-white bg-black">
+              {error}
+            </div>
+          ) : selectedStream && selectedStream.type === 'm3u' ? (
             <video
               ref={videoRef}
               className="w-full aspect-video"
               controls
               autoPlay
+              muted
               playsInline
+              crossOrigin="anonymous"
             />
           ) : selectedStream && selectedStream.type === 'screen' ? (
             <iframe
@@ -99,7 +107,7 @@ const LiveVideo = () => {
               title={selectedStream.name}
               className="w-full aspect-video"
               frameBorder="0"
-              allowFullScreen
+              allow="autoplay; fullscreen; encrypted-media"
             />
           ) : null}
         </div>
