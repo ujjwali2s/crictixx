@@ -1,17 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 import poster from "../6226751042536718146.jpg"
+import liveData from './live.json';
 
-const SonyLivMatches = () => {
-  const streams = [
-    { name: "Sony Liv Live Match", url: "https://edge3-moblive.yuppcdn.net/drm/smil:tencricketdrm.smil/chunklist_b996000.m3u8" },
-    { name: "willow H", url: "http://xxip9.top:8080/live/7656691303/chrisbolden765%40icloud.com/58847.m3u8" },
-    { name: "Sony 3 Asia Cup", url: "https://smart.bengaldigital.live/Star-Plus/index.m3u8" }
-  ];
-
-  const [selectedStream, setSelectedStream] = useState(streams[0]);
+const LiveVideo = () => {
+  const [streams, setStreams] = useState([]);
+  const [selectedStream, setSelectedStream] = useState(null);
   const videoRef = useRef(null);
   const hlsRef = useRef(null);
+
+  useEffect(() => {
+    setStreams(liveData);
+    if (liveData.length > 0) {
+      setSelectedStream(liveData[0]);
+    }
+  }, []);
 
   useEffect(() => {
     if (!videoRef.current || !selectedStream) {
@@ -49,7 +52,7 @@ const SonyLivMatches = () => {
               key={stream.name}
               onClick={() => setSelectedStream(stream)}
               className={`px-6 py-2 whitespace-nowrap rounded-lg transition-colors ${
-                selectedStream.name === stream.name
+                selectedStream && selectedStream.name === stream.name
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
@@ -90,4 +93,4 @@ const SonyLivMatches = () => {
   );
 };
 
-export default SonyLivMatches;
+export default LiveVideo;

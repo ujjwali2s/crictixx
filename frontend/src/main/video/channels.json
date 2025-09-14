@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Sony Liv Live Match",
+    "url": "https://edge3-moblive.yuppcdn.net/drm/smil:tencricketdrm.smil/chunklist_b996000.m3u8"
+  },
+  {
+    "name": "Sony Sports 1",
+    "url": "https://tiger-hub.vercel.app/SONY/Sports-1/tracks-v1a1/mono.ts.m3u8"
+  },
+  {
+    "name": "Sony 3 Asia Cup",
+    "url": "https://tataplay.slivcdn.com/hls/live/2011739/TEN1SD/master.m3u8"
+  }
+]
