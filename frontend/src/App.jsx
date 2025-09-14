@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LiveMatches from './main/LiveMatches';
+import LiveVideo from './main/video/LiveVideo';
+import TestVideo from './main/video/TestVideo';
 import VideoPlayer from './main/video/VideoPlayer';
 import JoinTelegramModal from './main/video/JoinTelegramModal';
 import Navbar from './main/video/Navbar';
@@ -74,7 +76,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LiveMatches />} />
           <Route path="/video" element={<VideoPlayer />} />
-          <Route path="/" element={<Test />} />
+          <Route path="/test" element={<LiveVideo />} />
+          <Route path="/test-url" element={<TestVideo />} />
           <Route path="/channel/astro" element={<Astro />} />
           <Route path="/channel/fox" element={<FoxCricket />} />
           <Route path="/channel/scricket" element={<SCricket />} />
