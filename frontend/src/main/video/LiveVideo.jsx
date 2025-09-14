@@ -21,22 +21,39 @@ const LiveVideo = () => {
   }, []);
 
   useEffect(() => {
-    if (!videoRef.current || !selectedStream) {
+    if (!selectedStream) {
       return;
     }
 
-    if (Hls.isSupported()) {
-      hlsRef.current = new Hls();
-      hlsRef.current.loadSource(selectedStream.url);
-      hlsRef.current.attachMedia(videoRef.current);
+    if (selectedStream.type === 'm3u') {
+      if (!videoRef.current) return;
 
-      hlsRef.current.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) {
-          console.error('HLS.js error:', data);
-        }
-      });
-    } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
-      videoRef.current.src = selectedStream.url;
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+      }
+
+      if (Hls.isSupported()) {
+        hlsRef.current = new Hls();
+        hlsRef.current.loadSource(selectedStream.url);
+        hlsRef.current.attachMedia(videoRef.current);
+
+        hlsRef.current.on(Hls.Events.ERROR, (_, data) => {
+          if (data.fatal) {
+            console.error('HLS.js error:', data);
+          }
+        });
+      } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
+        videoRef.current.src = selectedStream.url;
+      }
+    } else {
+      // For other types like 'screen', destroy hls if exists
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
+      if (videoRef.current) {
+        videoRef.current.src = '';
+      }
     }
 
     return () => {
@@ -66,15 +83,25 @@ const LiveVideo = () => {
           ))}
         </div>
 
-        {/* Video Player */}
+        {/* Video Player or iframe */}
         <div className="relative bg-black rounded-lg overflow-hidden">
-          <video
-            ref={videoRef}
-            className="w-full aspect-video"
-            controls
-            autoPlay
-            playsInline
-          />
+          {selectedStream && selectedStream.type === 'm3u' ? (
+            <video
+              ref={videoRef}
+              className="w-full aspect-video"
+              controls
+              autoPlay
+              playsInline
+            />
+          ) : selectedStream && selectedStream.type === 'screen' ? (
+            <iframe
+              src={selectedStream.url}
+              title={selectedStream.name}
+              className="w-full aspect-video"
+              frameBorder="0"
+              allowFullScreen
+            />
+          ) : null}
         </div>
         <a href="https://khelotoss.in/" target='_blank' rel="noreferrer">
           <img src={poster} alt="img" className='w-full h-full mt-4' />

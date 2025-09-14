@@ -1,14 +1,17 @@
 [
   {
     "name": "sony",
-    "url": "https://edge3-moblive.yuppcdn.net/drm/smil:tencricketdrm.smil/chunklist_b996000.m3u8"
+    "url": "https://edge3-moblive.yuppcdn.net/drm/smil:tencricketdrm.smil/chunklist_b996000.m3u8",
+    "type": "m3u"
   },
   {
     "name": "willow",
-    "url": "https://smart.bengaldigital.live/Star-Plus/index.m3u8"
+    "url": "https://odfinity.github.io/channelz/willow-sports",
+    "type": "screen"
   },
   {
     "name": "Live Match 3",
-    "url": "https://smart.bengaldigital.live/Star-Plus/index.m3u8"
+    "url": "https://smart.bengaldigital.live/Star-Plus/index.m3u8",
+    "type": "m3u"
   }
 ]
