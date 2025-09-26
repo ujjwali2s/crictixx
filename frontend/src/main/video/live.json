@@ -18,6 +18,5 @@
     "name": "US Willow HD",
     "url": "https://o2.sundaytueday.online/us-willowhd.m3u8?auth_key=1758464940-34409705c1375ef60a7e6a038961482d-00000000000000000000000000000000-1154047c384e7f46f6fc91031b1a1ef0&type=hls&isLive=true",
     "type": "m3u"
-  },
-  {"test":"https://github.com/Shubhamkur/Tv/blob/main/tvm3u,https://tv4wap.github.io/ID1/?id=willowtv2"
-}]
+  }
+]
