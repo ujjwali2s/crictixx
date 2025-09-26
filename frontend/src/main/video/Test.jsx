@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import Hls from 'hls.js';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
 
 const streamData = {
   name: "BAN vs WI VIP",
@@ -15,7 +16,7 @@ const streamData = {
 
 const VideoPlayer = () => {
   const videoRef = useRef(null);
-  const hlsRef = useRef(null);
+  const playerRef = useRef(null);
 
   useEffect(() => {
     if (!streamData.link) {
@@ -23,47 +24,48 @@ const VideoPlayer = () => {
       return;
     }
 
-    const customLoader = (config) => {
-      const originalLoader = config.loader;
-      return class CustomLoader extends originalLoader {
-        constructor(config) {
-          super(config);
-          const { headers } = streamData;
-          this.xhrSetup = (xhr) => {
+    const videoNode = videoRef.current;
+
+    if (playerRef.current) {
+      playerRef.current.dispose();
+    }
+
+    playerRef.current = videojs(videoNode, {
+      autoplay: true,
+      controls: true,
+      responsive: true,
+      fluid: true,
+      sources: [{
+        src: streamData.link,
+        type: 'application/x-mpegURL'
+      }],
+      html5: {
+        hls: {
+          enableLowInitialPlaylist: true,
+          smoothQualityChange: true,
+          overrideNative: true,
+          xhrSetup: (xhr, url) => {
+            const { headers } = streamData;
             Object.entries(headers).forEach(([key, value]) => {
               xhr.setRequestHeader(key, value);
             });
-          };
+          }
         }
-      };
-    };
+      }
+    });
 
-    if (Hls.isSupported()) {
-      hlsRef.current = new Hls({
-        xhrSetup: (xhr, url) => {
-          const { headers } = streamData;
-          Object.entries(headers).forEach(([key, value]) => {
-            xhr.setRequestHeader(key, value);
-          });
-        },
-        loader: customLoader(Hls.DefaultConfig),
-      });
-      hlsRef.current.loadSource(streamData.link);
-      hlsRef.current.attachMedia(videoRef.current);
+    playerRef.current.ready(() => {
+      // Player is ready
+    });
 
-      hlsRef.current.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) {
-          console.error('HLS.js error:', data);
-        }
-      });
-    } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
-      // Native HLS playback for Safari
-      videoRef.current.src = streamData.link;
-    }
+    playerRef.current.on('error', () => {
+      console.error('Video.js error:', playerRef.current.error()?.message);
+    });
 
     return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
       }
     };
   }, []);
@@ -73,7 +75,7 @@ const VideoPlayer = () => {
       <h2 className="text-center text-xl font-bold mb-4">{streamData.name}</h2>
       <video
         ref={videoRef}
-        className="w-full rounded-lg border shadow"
+        className="video-js vjs-default-skin w-full h-full"
         controls
         autoPlay
       ></video>

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Hls from 'hls.js';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
 import poster from "../6226751042536718146.jpg"
 
 const SonyLivMatches = () => {
@@ -10,31 +11,59 @@ const SonyLivMatches = () => {
   ];
 
   const [selectedStream, setSelectedStream] = useState(streams[0]);
+  const [error, setError] = useState(null);
   const videoRef = useRef(null);
-  const hlsRef = useRef(null);
+  const playerRef = useRef(null);
 
   useEffect(() => {
-    if (!videoRef.current || !selectedStream) {
+    setError(null); // Clear error when stream changes
+  }, [selectedStream]);
+
+  useEffect(() => {
+    if (!selectedStream || !videoRef.current) {
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
+      }
       return;
     }
 
-    if (Hls.isSupported()) {
-      hlsRef.current = new Hls();
-      hlsRef.current.loadSource(selectedStream.url);
-      hlsRef.current.attachMedia(videoRef.current);
+    const videoNode = videoRef.current;
 
-      hlsRef.current.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) {
-          console.error('HLS.js error:', data);
-        }
-      });
-    } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
-      videoRef.current.src = selectedStream.url;
+    if (playerRef.current) {
+      playerRef.current.dispose();
     }
 
+    playerRef.current = videojs(videoNode, {
+      autoplay: true,
+      controls: true,
+      responsive: true,
+      fluid: true,
+      sources: [{
+        src: selectedStream.url,
+        type: 'application/x-mpegURL'
+      }],
+      html5: {
+        hls: {
+          enableLowInitialPlaylist: true,
+          smoothQualityChange: true,
+          overrideNative: true
+        }
+      }
+    });
+
+    playerRef.current.ready(() => {
+      // Player is ready
+    });
+
+    playerRef.current.on('error', () => {
+      setError(`Video cannot be played: ${playerRef.current.error()?.message || 'Unknown error'}`);
+    });
+
     return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
       }
     };
   }, [selectedStream]);
@@ -61,13 +90,19 @@ const SonyLivMatches = () => {
 
         {/* Video Player */}
         <div className="relative bg-black rounded-lg overflow-hidden">
-          <video
-            ref={videoRef}
-            className="w-full aspect-video"
-            controls
-            autoPlay
-            playsInline
-          />
+          {error ? (
+            <div className="w-full aspect-video flex items-center justify-center text-white bg-black">
+              {error}
+            </div>
+          ) : (
+            <video
+              ref={videoRef}
+              className="video-js vjs-default-skin w-full h-full"
+              controls
+              autoPlay
+              playsInline
+            />
+          )}
         </div>
         <a href="https://khelotoss.in/" target='_blank' rel="noreferrer">
           <img src={poster} alt="img" className='w-full h-full mt-4' />

@@ -1,40 +1,57 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Hls from 'hls.js';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
 import poster from "../6226751042536718146.jpg"
 
 const TestVideo = () => {
   const [testUrl, setTestUrl] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef(null);
-  const hlsRef = useRef(null);
+  const playerRef = useRef(null);
 
   const handleTestUrl = () => {
     if (!testUrl) return;
 
     setIsPlaying(true);
 
-    if (Hls.isSupported()) {
-      hlsRef.current = new Hls();
-      hlsRef.current.loadSource(testUrl);
-      hlsRef.current.attachMedia(videoRef.current);
+    const videoNode = videoRef.current;
 
-      hlsRef.current.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) {
-          console.error('HLS.js error:', data);
-        }
-      });
-    } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
-      videoRef.current.src = testUrl;
+    if (playerRef.current) {
+      playerRef.current.dispose();
     }
+
+    playerRef.current = videojs(videoNode, {
+      autoplay: true,
+      controls: true,
+      responsive: true,
+      fluid: true,
+      sources: [{
+        src: testUrl,
+        type: 'application/x-mpegURL'
+      }],
+      html5: {
+        hls: {
+          enableLowInitialPlaylist: true,
+          smoothQualityChange: true,
+          overrideNative: true
+        }
+      }
+    });
+
+    playerRef.current.ready(() => {
+      // Player is ready
+    });
+
+    playerRef.current.on('error', () => {
+      console.error('Video.js error:', playerRef.current.error()?.message);
+    });
   };
 
   const handleStop = () => {
     setIsPlaying(false);
-    if (hlsRef.current) {
-      hlsRef.current.destroy();
-    }
-    if (videoRef.current) {
-      videoRef.current.src = '';
+    if (playerRef.current) {
+      playerRef.current.dispose();
+      playerRef.current = null;
     }
   };
 
@@ -82,7 +99,7 @@ const TestVideo = () => {
           <div className="relative bg-black rounded-lg overflow-hidden">
             <video
               ref={videoRef}
-              className="w-full aspect-video"
+              className="video-js vjs-default-skin w-full h-full"
               controls
               autoPlay
               playsInline

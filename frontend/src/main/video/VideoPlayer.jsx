@@ -1,37 +1,58 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import Hls from 'hls.js';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
 import poster from "../6226751042536718146.jpg"
 
 const VideoPlayer = () => {
   const location = useLocation();
   const videoUrl = location.state?.adfreeUrl;
   const videoRef = useRef(null);
-  const hlsRef = useRef(null);
+  const playerRef = useRef(null);
   const [viewerCount] = useState(() => Math.floor(Math.random() * (100 - 20 + 1)) + 20);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!videoUrl || !videoRef.current) {
       return;
     }
 
-    if (Hls.isSupported()) {
-      hlsRef.current = new Hls();
-      hlsRef.current.loadSource(videoUrl);
-      hlsRef.current.attachMedia(videoRef.current);
+    const videoNode = videoRef.current;
 
-      hlsRef.current.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) {
-          console.error('HLS.js error:', data);
-        }
-      });
-    } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
-      videoRef.current.src = videoUrl;
+    if (playerRef.current) {
+      playerRef.current.dispose();
     }
 
+    playerRef.current = videojs(videoNode, {
+      autoplay: true,
+      controls: true,
+      responsive: true,
+      fluid: true,
+      sources: [{
+        src: videoUrl,
+        type: 'application/x-mpegURL'
+      }],
+      html5: {
+        hls: {
+          enableLowInitialPlaylist: true,
+          smoothQualityChange: true,
+          overrideNative: true
+        }
+      }
+    });
+
+    playerRef.current.ready(() => {
+      // Player is ready
+    });
+
+    playerRef.current.on('error', () => {
+      setError(`Video cannot be played: ${playerRef.current.error()?.message || 'Unknown error'}`);
+    });
+
     return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
       }
     };
   }, [videoUrl]);
