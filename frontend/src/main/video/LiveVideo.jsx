@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Hls from 'hls.js';
+import React, { useEffect, useState, useRef } from 'react';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
 import poster from "../6226751042536718146.jpg"
 import liveData from './live.json';
 
@@ -7,8 +8,8 @@ const LiveVideo = () => {
   const [streams, setStreams] = useState([]);
   const [selectedStream, setSelectedStream] = useState(null);
   const [error, setError] = useState(null);
+  const playerRef = useRef(null);
   const videoRef = useRef(null);
-  const hlsRef = useRef(null);
 
   useEffect(() => {
     setStreams(liveData);
@@ -22,45 +23,50 @@ const LiveVideo = () => {
   }, [selectedStream]);
 
   useEffect(() => {
-    if (!selectedStream) {
+    if (!selectedStream || selectedStream.type !== 'm3u' || !videoRef.current) {
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
+      }
       return;
     }
 
-    if (selectedStream.type === 'm3u') {
-      if (!videoRef.current) return;
+    const videoNode = videoRef.current;
 
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-      }
-
-      if (Hls.isSupported()) {
-        hlsRef.current = new Hls();
-        hlsRef.current.loadSource(selectedStream.url);
-        hlsRef.current.attachMedia(videoRef.current);
-
-        hlsRef.current.on(Hls.Events.ERROR, (_, data) => {
-          if (data.fatal) {
-            console.error('HLS.js error:', data);
-            setError('Video cannot be played. Error: ' + data.details);
-          }
-        });
-      } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
-        videoRef.current.src = selectedStream.url;
-      }
-    } else {
-      // For other types like 'screen', destroy hls if exists
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-      if (videoRef.current) {
-        videoRef.current.src = '';
-      }
+    if (playerRef.current) {
+      playerRef.current.dispose();
     }
 
+    playerRef.current = videojs(videoNode, {
+      autoplay: true,
+      controls: true,
+      responsive: true,
+      fluid: true,
+      sources: [{
+        src: selectedStream.url,
+        type: 'application/x-mpegURL'
+      }],
+      html5: {
+        hls: {
+          enableLowInitialPlaylist: true,
+          smoothQualityChange: true,
+          overrideNative: true
+        }
+      }
+    });
+
+    playerRef.current.ready(() => {
+      // Player is ready
+    });
+
+    playerRef.current.on('error', () => {
+      setError(`Video cannot be played: ${playerRef.current.error()?.message || 'Unknown error'}`);
+    });
+
     return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
       }
     };
   }, [selectedStream]);
@@ -92,15 +98,9 @@ const LiveVideo = () => {
               {error}
             </div>
           ) : selectedStream && selectedStream.type === 'm3u' ? (
-            <video
-              ref={videoRef}
-              className="w-full aspect-video"
-              controls
-              autoPlay
-              muted
-              playsInline
-              crossOrigin="anonymous"
-            />
+            <div className="w-full aspect-video">
+              <video ref={videoRef} className="video-js vjs-default-skin w-full h-full" />
+            </div>
           ) : selectedStream && selectedStream.type === 'screen' ? (
             <iframe
               src={selectedStream.url}

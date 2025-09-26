@@ -1,0 +1,3 @@
+- [x] Remove react-player from package.json
+- [x] Update src/main/video/LiveVideo.jsx to use Video.js instead of ReactPlayer
+- [ ] Test the video playback functionality
